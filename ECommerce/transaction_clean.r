@@ -1,7 +1,7 @@
 # PACKAGES USED
 get_packages <- function() {
   
-  packages <- c("dplyr", "purrr", "tidyr", "ggplot2", "caret")
+  packages <- c("dplyr", "purrr", "tidyr", "ggplot2", "caret", "xts")
   
   lapply(packages, require, character.only=TRUE)
   
