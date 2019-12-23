@@ -44,8 +44,9 @@ remove(order_new)
 ## make factors
 factors <- c("customer_id", "seller_id", "payment_type", "product_category_name", "customer_city")
 
-# for testing #
-df <- df[0:10, ]
+# filter data for testing #
+df <- df %>%
+      
 ###############
 
 df <- as.data.frame(df)
