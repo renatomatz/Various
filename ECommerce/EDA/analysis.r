@@ -1,14 +1,16 @@
 # data
 customers <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_customers_dataset.csv")
+orders <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_orders_dataset.csv")
 order_items <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_order_items_dataset.csv")
 payments <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_order_payments_dataset.csv")
+reviews <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_order_reviews_dataset.csv")
 
 # complementary
 products <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_products_dataset.csv")
 sellers <- read_csv("~/Documents/Projects/Various/ECommerce/BR_EC/olist_sellers_dataset.csv")
 
 # customer states
-customers %>% 
+customer_states <- customers %>% 
   group_by(customer_city, customer_state) %>% 
   count() %>% 
   arrange(desc(n)) %>% 
@@ -20,6 +22,15 @@ customers %>%
 ## mostly Sao Paulo, followed by Rio, and BH
 ## number of customers decrease in a decreasing rate after city count goes below 1000
 ## smaller cities mostly SP
+
+## average sales per customer
+nrow(orders) / length(unique(orders$customer_id))
+
+orders %>%
+  group_by(customer_id) %>%
+  count() %>%
+  arrange(desc(n))
+# this seems to indicate that the dataset has one order per customer
 
 # average number of items bought
 mean(order_items$order_item_id)
@@ -74,6 +85,8 @@ order_items %>%
     theme(axis.text.x = element_text(angle=90))
 ## fairly similar results to order numbers, though lets just see by how much
 
+# difference between revenue and numbers 
+
 normalize <- function(x) {
   (x-mean(x)) / sd(x)
 }
@@ -92,8 +105,23 @@ order_items %>%
 ## I'll interpret this graph as the relative difference between a product's sales vs its revenues generated
 ### this can mean many things, though at first glance, it shows which products can bring the most revenue from fewer buys
 
+# top sellers
+
+order_items %>%
+  group_by(seller_id) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(20) %>%
+  ggplot(aes(x=reorder(seller_id, -n), y=n, label=n)) +
+    geom_bar(stat = "identity") +
+    geom_text(aes(y=n+100), size=3) +
+    theme(axis.text.x = element_text(angle=90))
+## nothing too insightfull, sellers follow same distribution as products and categories
+
+##the above distribution just shows that there is no significant category outlier neither uniform distributions##
+
 # create orders time series
-start=as.Date("2017-02-01")
+start=as.Date("2018-02-01")
 end=as.Date("2018-09-01")
 
 order_items %>%
@@ -108,3 +136,13 @@ sales_ts %>%
   select(-Date) %>%
   as.xts() %>% 
   window(start = start, end = end) -> sales_ts
+
+sales_ts %>% autoplot()
+
+# ARIMA model
+
+
+
+d = 0
+p = 0
+q = 0
