@@ -7,6 +7,7 @@ from tensorflow.keras.layers import Dense, Flatten
 
 from preprocessor import features_pipeline
 
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 
@@ -36,6 +37,8 @@ ly = y_train.shape[0]
 n_train = round(ly * train_p)
 y_train, y_valid = y_train[:n_train], y_train[n_train:]
 
+# Linear Model 
+
 # Model 0
 
 ## Build 
@@ -51,9 +54,9 @@ model_0.compile(
     metrics=["accuracy"]
 )
 
-model_0.fit(
+history = model_0.fit(
     X_train, y_train, 
-    epochs=30,
+    epochs=10,
     validation_data=(X_valid, y_valid)
 )
 
